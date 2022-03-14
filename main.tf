@@ -17,3 +17,9 @@ terraform {
 provider "azurerm" {
   features {}
 }
+
+# Create a resource group
+resource "azurerm_resource_group" "terraTest" {
+  name     = "terraTest"
+  location = "UK south"
+}
