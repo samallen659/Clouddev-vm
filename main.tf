@@ -18,8 +18,14 @@ provider "azurerm" {
   features {}
 }
 
-variable "ssh_key" {
-  type = string 
+resource "tls_private_key" "linux_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "local_file" "linuxkey" {
+  filename = "linuxkey.pem"
+  content  = tls_private_key.linux_key.private_key_pem
 }
 
 # Create a resource group
@@ -101,14 +107,13 @@ resource "azurerm_linux_virtual_machine" "linux_testing" {
   size                = "Standard_B2s"
   admin_username      = "adminuser"
   admin_ssh_key {
-      username = "adminuser"
-      public_key = var.ssh_key
+    username   = "adminuser"
+    public_key = tls_private_key.linux_key.public_key_openssh
   }
-  computer_name       = "linuxTesting"
+  computer_name = "linuxTesting"
   network_interface_ids = [
     azurerm_network_interface.terraformNIC.id,
   ]
-  disable_password_authentication = false
 
 
   os_disk {
@@ -122,4 +127,9 @@ resource "azurerm_linux_virtual_machine" "linux_testing" {
     sku       = "18.04-LTS"
     version   = "latest"
   }
+
+  depends_on = [
+    azurerm_network_interface.terraformNIC,
+    tls_private_key.linux_key
+  ]
 }
