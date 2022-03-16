@@ -18,6 +18,10 @@ provider "azurerm" {
   features {}
 }
 
+variable "ssh_key" {
+  type = string 
+}
+
 # Create a resource group
 resource "azurerm_resource_group" "rg_terra" {
   name     = "rg_terra"
@@ -96,7 +100,10 @@ resource "azurerm_linux_virtual_machine" "linux_testing" {
   location            = azurerm_resource_group.rg_terra.location
   size                = "Standard_B2s"
   admin_username      = "adminuser"
-  admin_password      = "Azure2022!"
+  admin_ssh_key {
+      username = "adminuser"
+      public_key = var.ssh_key
+  }
   computer_name       = "linuxTesting"
   network_interface_ids = [
     azurerm_network_interface.terraformNIC.id,
