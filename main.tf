@@ -53,7 +53,7 @@ resource "azurerm_public_ip" "linuxPubIP" {
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "rg_terra_nsg" {
   name                = "rg_terra_nsg"
-  location            = "francecentral"
+  location            = "uk south"
   resource_group_name = azurerm_resource_group.rg_terra.name
 
   security_rule {
@@ -70,8 +70,6 @@ resource "azurerm_network_security_group" "rg_terra_nsg" {
 
 }
 
-
-
 resource "azurerm_network_interface" "terraformNIC" {
   name                = "terraformNIC"
   location            = azurerm_resource_group.rg_terra.location
@@ -84,8 +82,6 @@ resource "azurerm_network_interface" "terraformNIC" {
     public_ip_address_id          = azurerm_public_ip.linuxPubIP.id
   }
 }
-
-
 
 # Connect the security group to the network interface
 resource "azurerm_network_interface_security_group_association" "terraformNSGAssociation" {
